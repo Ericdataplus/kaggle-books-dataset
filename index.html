@@ -503,6 +503,59 @@
             .ml-highlights {
                 flex-direction: column;
             }
+
+            /* Hide desktop graphs on mobile */
+            .desktop-viz {
+                display: none !important;
+            }
+
+            /* Show mobile gallery */
+            .mobile-gallery {
+                display: block !important;
+            }
+        }
+
+        /* Mobile Gallery */
+        .mobile-gallery {
+            display: none;
+            padding: 20px 15px;
+        }
+
+        .mobile-gallery h2 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--text-white);
+        }
+
+        .mobile-graphs {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .mobile-graph-item {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-graph-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .mobile-graph-label {
+            padding: 8px 10px;
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            text-align: center;
+        }
+
+        .desktop-viz {
+            display: block;
         }
     </style>
 </head>
@@ -556,14 +609,46 @@
         </div>
     </section>
 
-    <!-- Click Hint -->
-    <div
+    <!-- Click Hint (Desktop only) -->
+    <div class="desktop-viz"
         style="text-align: center; padding: 12px; background: rgba(255,255,255,0.03); color: #8b949e; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05);">
         💡 Click any graph to expand • Click again to close
     </div>
 
-    <!-- ML Banner -->
-    <div class="banner" style="background: linear-gradient(90deg, rgba(163, 113, 247, 0.1), rgba(86, 211, 100, 0.1));">
+    <!-- Mobile Gallery (Phone only) -->
+    <section class="mobile-gallery">
+        <h2>📊 Key Insights</h2>
+        <div class="mobile-graphs">
+            <div class="mobile-graph-item">
+                <img src="graphs_mobile/01_stats.png" alt="Dataset Overview">
+                <div class="mobile-graph-label">Dataset Overview</div>
+            </div>
+            <div class="mobile-graph-item">
+                <img src="graphs_mobile/02_categories.png" alt="Top Categories">
+                <div class="mobile-graph-label">Top Categories</div>
+            </div>
+            <div class="mobile-graph-item">
+                <img src="graphs_mobile/03_ratings.png" alt="Rating Distribution">
+                <div class="mobile-graph-label">Rating Distribution</div>
+            </div>
+            <div class="mobile-graph-item">
+                <img src="graphs_mobile/04_ml.png" alt="ML Clustering">
+                <div class="mobile-graph-label">ML Model</div>
+            </div>
+            <div class="mobile-graph-item">
+                <img src="graphs_mobile/05_price.png" alt="Price Distribution">
+                <div class="mobile-graph-label">Price Ranges</div>
+            </div>
+            <div class="mobile-graph-item">
+                <img src="graphs_mobile/06_insights.png" alt="Key Insights">
+                <div class="mobile-graph-label">Key Takeaways</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ML Banner (Desktop only) -->
+    <div class="banner desktop-viz"
+        style="background: linear-gradient(90deg, rgba(163, 113, 247, 0.1), rgba(86, 211, 100, 0.1));">
         <h3 style="color: var(--accent-purple);">2 ML Techniques Applied</h3>
         <div class="card-row">
             <div class="card">
@@ -578,7 +663,7 @@
     </div>
 
     <!-- Category Intelligence -->
-    <section class="section">
+    <section class="section desktop-viz">
         <div class="section-header">
             <h2 style="color: var(--accent-purple);">Category Intelligence</h2>
             <p>Medical books are longest (545 pages), Literary Criticism shortest (327 pages)</p>
@@ -599,7 +684,7 @@
     </section>
 
     <!-- Category Clustering -->
-    <section class="section">
+    <section class="section desktop-viz">
         <div class="section-header">
             <h2 style="color: var(--accent-green);">Category Clustering</h2>
             <p>K-Means identifies 5 distinct book clusters</p>
@@ -620,7 +705,7 @@
     </section>
 
     <!-- EDA Section -->
-    <section class="section">
+    <section class="section desktop-viz">
         <div class="section-header">
             <h2>Exploratory Analysis</h2>
             <p>Category, rating, and publisher insights</p>
