@@ -1,0 +1,148 @@
+======================================================================
+BOOKS DATASET - COMPREHENSIVE OVERVIEW
+======================================================================
+
+📚 Total Books: 15,147
+📊 Total Columns: 21
+
+----------------------------------------------------------------------
+COLUMNS & DATA TYPES
+----------------------------------------------------------------------
+  book_id              | object     | 15,147 non-null values
+  title                | object     | 15,139 non-null values
+  subtitle             | object     | 5,983 non-null values
+  authors              | object     | 11,622 non-null values
+  publisher            | object     | 7,090 non-null values
+  published_date       | object     | 14,933 non-null values
+  description          | object     | 8,351 non-null values
+  page_count           | float64    | 14,933 non-null values
+  categories           | object     | 12,695 non-null values
+  average_rating       | float64    | 857 non-null values
+  ratings_count        | int64      | 15,147 non-null values
+  language             | object     | 15,147 non-null values
+  preview_link         | object     | 15,147 non-null values
+  info_link            | object     | 15,147 non-null values
+  isbn_13              | float64    | 7,383 non-null values
+  isbn_10              | object     | 7,121 non-null values
+  list_price           | float64    | 2,943 non-null values
+  currency             | object     | 2,943 non-null values
+  buyable              | bool       | 15,147 non-null values
+  search_category      | object     | 15,147 non-null values
+  thumbnail            | object     | 14,478 non-null values
+
+----------------------------------------------------------------------
+MISSING VALUES SUMMARY
+----------------------------------------------------------------------
+  title                |      8 missing (0.1%)
+  subtitle             |  9,164 missing (60.5%)
+  authors              |  3,525 missing (23.3%)
+  publisher            |  8,057 missing (53.2%)
+  published_date       |    214 missing (1.4%)
+  description          |  6,796 missing (44.9%)
+  page_count           |    214 missing (1.4%)
+  categories           |  2,452 missing (16.2%)
+  average_rating       | 14,290 missing (94.3%)
+  isbn_13              |  7,764 missing (51.3%)
+  isbn_10              |  8,026 missing (53.0%)
+  list_price           | 12,204 missing (80.6%)
+  currency             | 12,204 missing (80.6%)
+  thumbnail            |    669 missing (4.4%)
+
+----------------------------------------------------------------------
+NUMERICAL COLUMNS STATISTICS
+----------------------------------------------------------------------
+
+  page_count:
+    Min: 0.0
+    Max: 7768.0
+    Mean: 484.79
+    Median: 368.00
+
+  average_rating:
+    Min: 1.0
+    Max: 5.0
+    Mean: 4.05
+    Median: 4.00
+
+  ratings_count:
+    Min: 0
+    Max: 826
+    Mean: 0.38
+    Median: 0.00
+
+  list_price:
+    Min: 0.0
+    Max: 1755.0
+    Mean: 48.17
+    Median: 19.00
+
+----------------------------------------------------------------------
+CATEGORICAL INSIGHTS
+----------------------------------------------------------------------
+
+  Unique Categories: 149
+  Unique Languages: 37
+  Unique Publishers: 2,001
+
+  TOP 15 CATEGORIES:
+    bestsellers 2024: 156
+    romance: 155
+    italian cooking: 155
+    bestsellers 2022: 154
+    c++ programming: 154
+    young adult fantasy: 152
+    mystery thriller: 152
+    meditation mindfulness: 151
+    autobiography: 150
+    fiction bestsellers: 150
+    machine learning AI: 150
+    graphic novels manga: 149
+    science fiction: 149
+    biography: 148
+    finance investing: 148
+
+  TOP 10 LANGUAGES:
+    en: 14821
+    es: 69
+    de: 42
+    fr: 35
+    pt-BR: 34
+    it: 22
+    zh-CN: 18
+    nl: 12
+    id: 9
+    da: 8
+
+  TOP 10 PUBLISHERS:
+    John Wiley & Sons: 266
+    Routledge: 253
+    Simon and Schuster: 167
+    Penguin: 134
+    Createspace Independent Publishing Platform: 133
+    Springer: 115
+    Springer Nature: 110
+    CRC Press: 104
+    Independently Published: 95
+    Harper Collins: 83
+
+----------------------------------------------------------------------
+RATINGS DISTRIBUTION
+----------------------------------------------------------------------
+rating_bin
+0-1     39
+1-2     53
+2-3     95
+3-4    247
+4-5    423
+
+----------------------------------------------------------------------
+SAMPLE DATA (First 3 rows)
+----------------------------------------------------------------------
+                 title                           authors  average_rating  page_count      search_category
+0          Bestsellers            Ivan King, bestsellers             NaN        70.0  fiction bestsellers
+1          Bestsellers            Ivan King, bestsellers             NaN        32.0  fiction bestsellers
+2  The Bestseller Code  Jodie Archer, Matthew L. Jockers             NaN       253.0  fiction bestsellers
+
+======================================================================
+ANALYSIS COMPLETE!
+======================================================================

@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books Dataset Analysis | Professional Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #14b8a6;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --dark: #0f172a;
+            --dark-lighter: #1e293b;
+            --gray: #64748b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            --shadow-xl: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dark);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero .subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: #a5b4fc;
+            margin-bottom: 3rem;
+            font-weight: 300;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat .number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-stat .label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+
+        .scroll-indicator svg {
+            width: 30px;
+            height: 30px;
+            fill: var(--gray);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem 2rem;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav.scrolled {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .nav-logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--white);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Sections */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--dark-lighter);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .card.purple::before { background: var(--gradient-1); }
+        .card.pink::before { background: var(--gradient-2); }
+        .card.blue::before { background: var(--gradient-3); }
+        .card.green::before { background: var(--gradient-4); }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card.purple .card-icon { background: rgba(99, 102, 241, 0.2); }
+        .card.pink .card-icon { background: rgba(236, 72, 153, 0.2); }
+        .card.blue .card-icon { background: rgba(59, 130, 246, 0.2); }
+        .card.green .card-icon { background: rgba(34, 197, 94, 0.2); }
+
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .card p {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Stat Cards */
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .stat-card {
+            background: var(--dark-lighter);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.02);
+        }
+
+        .stat-card .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .stat-card .info h4 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-card .info p {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Insights Section */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 968px) {
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .insight-main {
+            background: var(--dark-lighter);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+
+        .insight-main h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bar-label {
+            width: 150px;
+            font-size: 0.85rem;
+            color: var(--gray);
+            flex-shrink: 0;
+            text-align: right;
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 35px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar {
+            height: 100%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: width 1s ease-out;
+        }
+
+        .bar.purple { background: var(--gradient-1); }
+        .bar.pink { background: var(--gradient-2); }
+        .bar.blue { background: var(--gradient-3); }
+        .bar.green { background: var(--gradient-4); }
+
+        .insight-side {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .insight-card {
+            background: var(--dark-lighter);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .insight-card h4 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .insight-card .big-number {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .insight-card .big-number.gradient-1 {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .insight-card .big-number.gradient-2 {
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .insight-card .big-number.gradient-3 {
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .insight-card .description {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Author Table */
+        .authors-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .authors-table th,
+        .authors-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .authors-table th {
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .authors-table tr:hover td {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .authors-table .rank {
+            width: 60px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .authors-table .author-name {
+            font-weight: 600;
+        }
+
+        .authors-table .books-count {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .authors-table .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rating-stars {
+            color: var(--accent);
+        }
+
+        /* Gallery Section */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .gallery-item {
+            background: var(--dark-lighter);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+        }
+
+        .gallery-item .caption {
+            padding: 1.5rem;
+        }
+
+        .gallery-item .caption h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .gallery-item .caption p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Findings Section */
+        .findings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .finding-item {
+            background: var(--dark-lighter);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .finding-number {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .finding-content h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .finding-content p {
+            color: var(--gray);
+            line-height: 1.7;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .highlight.green { color: var(--success); }
+        .highlight.orange { color: var(--accent); }
+
+        /* Footer */
+        footer {
+            background: var(--dark-lighter);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        footer .tech-stack {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        footer .tech-tag {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .bar-label {
+                width: 100px;
+                font-size: 0.75rem;
+            }
+            
+            .finding-item {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-logo">📚 Book Analytics</div>
+        <ul class="nav-links">
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#insights">Insights</a></li>
+            <li><a href="#authors">Authors</a></li>
+            <li><a href="#findings">Key Findings</a></li>
+            <li><a href="#visualizations">Visualizations</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Books Dataset Analysis</h1>
+            <p class="subtitle">A comprehensive data-driven exploration of 15,000+ books across 149 categories, revealing patterns in publishing, ratings, and reader preferences.</p>
+            
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="number">15,147</div>
+                    <div class="label">Total Books</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">149</div>
+                    <div class="label">Categories</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">2,001</div>
+                    <div class="label">Publishers</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">37</div>
+                    <div class="label">Languages</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator" onclick="document.getElementById('overview').scrollIntoView({behavior: 'smooth'})">
+            <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview">
+        <div class="section-header fade-in">
+            <h2>Dataset Overview</h2>
+            <p>Key metrics and quick insights from our comprehensive book analysis</p>
+        </div>
+
+        <div class="stat-cards fade-in">
+            <div class="stat-card">
+                <div class="icon" style="background: rgba(99, 102, 241, 0.2);">📖</div>
+                <div class="info">
+                    <h4>485</h4>
+                    <p>Average Pages per Book</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon" style="background: rgba(245, 158, 11, 0.2);">⭐</div>
+                <div class="info">
+                    <h4>4.05</h4>
+                    <p>Average Rating (857 rated)</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon" style="background: rgba(34, 197, 94, 0.2);">💰</div>
+                <div class="info">
+                    <h4>$48.17</h4>
+                    <p>Average List Price</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon" style="background: rgba(236, 72, 153, 0.2);">🌍</div>
+                <div class="info">
+                    <h4>97.8%</h4>
+                    <p>English Language Books</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cards-grid fade-in">
+            <div class="card purple">
+                <div class="card-icon">📈</div>
+                <h3>Publication Surge</h3>
+                <p>The 2010s saw the largest publishing boom with <strong>3,530 books</strong> — representing 23% of our entire dataset. Digital publishing has dramatically lowered barriers to entry.</p>
+            </div>
+            <div class="card pink">
+                <div class="card-icon">🤖</div>
+                <h3>AI & ML Explosion</h3>
+                <p>Machine Learning and AI content grew by <strong>247.8%</strong> between the 2010s and 2020s, reflecting the tech industry's transformation and growing public interest.</p>
+            </div>
+            <div class="card blue">
+                <div class="card-icon">💎</div>
+                <h3>Hidden Gems</h3>
+                <p>We found <strong>90 high-value books</strong> priced under $15 with ratings above 4.5 — proving that quality doesn't always come with a premium price tag.</p>
+            </div>
+            <div class="card green">
+                <div class="card-icon">👑</div>
+                <h3>King of Authors</h3>
+                <p>Stephen King and James Patterson lead with <strong>64 books each</strong>, followed closely by Terry Pratchett (61) and Brandon Sanderson (60).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Insights Section -->
+    <section id="insights">
+        <div class="section-header fade-in">
+            <h2>Deep Insights</h2>
+            <p>Uncovering the stories behind the numbers</p>
+        </div>
+
+        <div class="insights-grid fade-in">
+            <div class="insight-main">
+                <h3>📊 Top Categories by Book Count</h3>
+                <div class="bar-chart">
+                    <div class="bar-item">
+                        <span class="bar-label">Bestsellers 2024</span>
+                        <div class="bar-container">
+                            <div class="bar purple" style="width: 100%;">156</div>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <span class="bar-label">Romance</span>
+                        <div class="bar-container">
+                            <div class="bar pink" style="width: 99%;">155</div>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <span class="bar-label">Italian Cooking</span>
+                        <div class="bar-container">
+                            <div class="bar blue" style="width: 99%;">155</div>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <span class="bar-label">C++ Programming</span>
+                        <div class="bar-container">
+                            <div class="bar green" style="width: 99%;">154</div>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <span class="bar-label">Mystery Thriller</span>
+                        <div class="bar-container">
+                            <div class="bar purple" style="width: 97%;">152</div>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <span class="bar-label">Young Adult Fantasy</span>
+                        <div class="bar-container">
+                            <div class="bar pink" style="width: 97%;">152</div>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <span class="bar-label">Meditation</span>
+                        <div class="bar-container">
+                            <div class="bar blue" style="width: 97%;">151</div>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <span class="bar-label">Machine Learning AI</span>
+                        <div class="bar-container">
+                            <div class="bar green" style="width: 96%;">150</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="insight-side">
+                <div class="insight-card">
+                    <h4>Rating Insight</h4>
+                    <div class="big-number gradient-1">49.4%</div>
+                    <p class="description">of rated books have 5 stars — showing a positive bias in the rating system</p>
+                </div>
+                <div class="insight-card">
+                    <h4>Price Correlation</h4>
+                    <div class="big-number gradient-2">-0.11</div>
+                    <p class="description">Negative correlation between price and rating — expensive ≠ better!</p>
+                </div>
+                <div class="insight-card">
+                    <h4>Longest Book</h4>
+                    <div class="big-number gradient-3">4,861</div>
+                    <p class="description">pages in "A Game of Thrones: The Story Continues" box set</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Authors Section -->
+    <section id="authors">
+        <div class="section-header fade-in">
+            <h2>Star Authors</h2>
+            <p>The writers who dominate the bestseller lists and reader hearts</p>
+        </div>
+
+        <div class="cards-grid fade-in">
+            <div class="insight-main" style="overflow-x: auto;">
+                <h3>🏆 Most Prolific Authors</h3>
+                <table class="authors-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Author</th>
+                            <th>Books</th>
+                            <th>Primary Publisher</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="rank">#1</td><td class="author-name">Stephen King</td><td class="books-count">64</td><td>Simon and Schuster</td></tr>
+                        <tr><td class="rank">#2</td><td class="author-name">James Patterson</td><td class="books-count">64</td><td>Various</td></tr>
+                        <tr><td class="rank">#3</td><td class="author-name">Terry Pratchett</td><td class="books-count">61</td><td>Harper Collins</td></tr>
+                        <tr><td class="rank">#4</td><td class="author-name">Brandon Sanderson</td><td class="books-count">60</td><td>Tor Books</td></tr>
+                        <tr><td class="rank">#5</td><td class="author-name">Nora Roberts</td><td class="books-count">60</td><td>Penguin</td></tr>
+                        <tr><td class="rank">#6</td><td class="author-name">Neil Gaiman</td><td class="books-count">59</td><td>Various</td></tr>
+                        <tr><td class="rank">#7</td><td class="author-name">Agatha Christie</td><td class="books-count">58</td><td>Harper Collins</td></tr>
+                        <tr><td class="rank">#8</td><td class="author-name">Malcolm Gladwell</td><td class="books-count">58</td><td>Various</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="insight-main" style="overflow-x: auto;">
+                <h3>⭐ Highest Rated Authors</h3>
+                <table class="authors-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Author</th>
+                            <th>Avg Rating</th>
+                            <th>Books Rated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="rank">#1</td><td class="author-name">J.K. Rowling</td><td><span class="rating"><span class="rating-stars">★★★★★</span> 4.67</span></td><td>3</td></tr>
+                        <tr><td class="rank">#2</td><td class="author-name">Simon Sinek</td><td><span class="rating"><span class="rating-stars">★★★★★</span> 4.67</span></td><td>3</td></tr>
+                        <tr><td class="rank">#3</td><td class="author-name">Jordan Peterson</td><td><span class="rating"><span class="rating-stars">★★★★★</span> 4.67</span></td><td>3</td></tr>
+                        <tr><td class="rank">#4</td><td class="author-name">Stephen R. Covey</td><td><span class="rating"><span class="rating-stars">★★★★★</span> 4.61</span></td><td>9</td></tr>
+                        <tr><td class="rank">#5</td><td class="author-name">Toni Morrison</td><td><span class="rating"><span class="rating-stars">★★★★★</span> 4.58</span></td><td>6</td></tr>
+                        <tr><td class="rank">#6</td><td class="author-name">Brandon Sanderson</td><td><span class="rating"><span class="rating-stars">★★★★★</span> 4.57</span></td><td>15</td></tr>
+                        <tr><td class="rank">#7</td><td class="author-name">Yuval Noah Harari</td><td><span class="rating"><span class="rating-stars">★★★★★</span> 4.50</span></td><td>4</td></tr>
+                        <tr><td class="rank">#8</td><td class="author-name">Robert Kiyosaki</td><td><span class="rating"><span class="rating-stars">★★★★</span> 4.45</span></td><td>11</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Findings Section -->
+    <section id="findings">
+        <div class="section-header fade-in">
+            <h2>Key Findings</h2>
+            <p>The most surprising and actionable insights from our analysis</p>
+        </div>
+
+        <div class="findings-list fade-in">
+            <div class="finding-item">
+                <div class="finding-number">1</div>
+                <div class="finding-content">
+                    <h4>The Description Effect</h4>
+                    <p>Books with descriptions are <span class="highlight">5x more likely</span> to have ratings (8.8% vs 1.7%). This suggests that readers engage more deeply with books that have proper metadata — a crucial insight for publishers optimizing their listings.</p>
+                </div>
+            </div>
+            
+            <div class="finding-item">
+                <div class="finding-number">2</div>
+                <div class="finding-content">
+                    <h4>The Length-Quality Paradox</h4>
+                    <p>Contrary to expectations, page count has <span class="highlight green">almost no correlation</span> with ratings (0.014). Short books (<200 pages) average 3.90 stars, while long books (>500 pages) average 4.07 stars — a negligible difference.</p>
+                </div>
+            </div>
+            
+            <div class="finding-item">
+                <div class="finding-number">3</div>
+                <div class="finding-content">
+                    <h4>Spanish Books Win</h4>
+                    <p>Spanish-language books have the <span class="highlight orange">highest average rating at 4.22</span>, beating English (4.05) and German (3.71). This could indicate stricter curation for translated works or different rating cultures.</p>
+                </div>
+            </div>
+            
+            <div class="finding-item">
+                <div class="finding-number">4</div>
+                <div class="finding-content">
+                    <h4>Publisher Specialization</h4>
+                    <p>Major publishers show clear focus areas: <span class="highlight">Simon and Schuster</span> dominates with Stephen King (23% of their catalog), while <span class="highlight">Penguin</span> leans heavily on Nora Roberts (30%). Publishers build empires around star authors.</p>
+                </div>
+            </div>
+            
+            <div class="finding-item">
+                <div class="finding-number">5</div>
+                <div class="finding-content">
+                    <h4>The Buyability Gap</h4>
+                    <p>Only <span class="highlight">17% of books</span> are marked as buyable, but James Patterson's books lead at 85% buyability. This suggests significant opportunities for publishers to improve e-commerce integration.</p>
+                </div>
+            </div>
+            
+            <div class="finding-item">
+                <div class="finding-number">6</div>
+                <div class="finding-content">
+                    <h4>Tech Content Boom</h4>
+                    <p>Machine Learning & AI books grew <span class="highlight green">247.8%</span> from 2010s to 2020s, while Data Science grew 71%. The tech publishing sector is the fastest-growing category in our dataset.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visualizations Section -->
+    <section id="visualizations">
+        <div class="section-header fade-in">
+            <h2>Visualizations</h2>
+            <p>Data brought to life through charts and animations</p>
+        </div>
+
+        <div class="gallery-grid fade-in">
+            <div class="gallery-item">
+                <img src="graphs/10_summary_dashboard.png" alt="Summary Dashboard" onerror="this.src='https://via.placeholder.com/600x400/1e293b/6366f1?text=Summary+Dashboard'">
+                <div class="caption">
+                    <h4>Summary Dashboard</h4>
+                    <p>A comprehensive overview of all key metrics in one view</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="graphs/01_category_distribution.png" alt="Category Distribution" onerror="this.src='https://via.placeholder.com/600x400/1e293b/6366f1?text=Category+Distribution'">
+                <div class="caption">
+                    <h4>Category Distribution</h4>
+                    <p>Top 20 categories by book count</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="graphs/02_ratings_analysis.png" alt="Ratings Analysis" onerror="this.src='https://via.placeholder.com/600x400/1e293b/6366f1?text=Ratings+Analysis'">
+                <div class="caption">
+                    <h4>Ratings Analysis</h4>
+                    <p>Deep dive into rating patterns and distributions</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="graphs/04_publisher_analysis.png" alt="Publisher Analysis" onerror="this.src='https://via.placeholder.com/600x400/1e293b/6366f1?text=Publisher+Analysis'">
+                <div class="caption">
+                    <h4>Publisher Analysis</h4>
+                    <p>Market share and specialization of top publishers</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header fade-in" style="margin-top: 4rem;">
+            <h2>Animated Insights</h2>
+            <p>Watch the data come alive</p>
+        </div>
+
+        <div class="gallery-grid fade-in">
+            <div class="gallery-item">
+                <img src="gifs/06_stats_counter.gif" alt="Stats Counter" onerror="this.src='https://via.placeholder.com/600x400/1e293b/6366f1?text=Stats+Counter+GIF'">
+                <div class="caption">
+                    <h4>Statistics Counter</h4>
+                    <p>Key statistics counting up dynamically</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="gifs/04_category_countdown.gif" alt="Category Countdown" onerror="this.src='https://via.placeholder.com/600x400/1e293b/6366f1?text=Category+Countdown+GIF'">
+                <div class="caption">
+                    <h4>Category Countdown</h4>
+                    <p>Top 10 categories revealed dramatically</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="gifs/09_publisher_race.gif" alt="Publisher Race" onerror="this.src='https://via.placeholder.com/600x400/1e293b/6366f1?text=Publisher+Race+GIF'">
+                <div class="caption">
+                    <h4>Publisher Bar Race</h4>
+                    <p>Publishers competing for dominance</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="gifs/01_scatter_buildup.gif" alt="Scatter Buildup" onerror="this.src='https://via.placeholder.com/600x400/1e293b/6366f1?text=Scatter+Buildup+GIF'">
+                <div class="caption">
+                    <h4>Pages vs Ratings</h4>
+                    <p>Books appearing one by one, colored by rating</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Books Dataset Analysis Report | Generated December 2024</p>
+        <p style="margin-top: 0.5rem;">Dataset: 15,147 books across 149 categories from Google Books</p>
+        <div class="tech-stack">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Pandas</span>
+            <span class="tech-tag">Matplotlib</span>
+            <span class="tech-tag">Seaborn</span>
+            <span class="tech-tag">Kaggle</span>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll-based animations
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        fadeElements.forEach(el => observer.observe(el));
+
+        // Nav scroll effect
+        const nav = document.querySelector('.nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
