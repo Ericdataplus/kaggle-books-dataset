@@ -1,8 +1,12 @@
-# Books Dataset Analysis Dashboard
+# 📚 Books Dataset Analysis Dashboard
 
-🔗 **Live Demo:** [View Dashboard](https://ericdataplus.github.io/kaggle-books-dataset/)
+> 📊 **Inspired by:** [Books Dataset - 15K Books Across 100 Categories](https://www.kaggle.com/datasets/mihikaajayjadhav/books-dataset-15k-books-across-100-categories)
+>
+> Interactive data analysis and visualization exploring patterns in publishing, ratings, and reader preferences.
 
-A comprehensive data-driven exploration of **15,000+ books** across 149 categories, revealing patterns in publishing, ratings, and reader preferences.
+🔗 **[View Live Dashboard](https://ericdataplus.github.io/kaggle-books-dataset/)**
+
+A comprehensive data-driven exploration of **15,000+ books** across 149 categories.
 
 ![Dashboard Preview](graphs/10_summary_dashboard.png)
 
