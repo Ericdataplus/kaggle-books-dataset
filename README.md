@@ -1,6 +1,6 @@
 # Books Dataset Analysis Dashboard
 
-🔗 **Live Demo:** [View Dashboard](https://YOUR_USERNAME.github.io/kaggle-books-dataset/)
+🔗 **Live Demo:** [View Dashboard](https://ericdataplus.github.io/kaggle-books-dataset/)
 
 A comprehensive data-driven exploration of **15,000+ books** across 149 categories, revealing patterns in publishing, ratings, and reader preferences.
 
@@ -73,7 +73,7 @@ Dataset from Kaggle: [Books Dataset - 15K Books Across 100 Categories](https://w
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/kaggle-books-dataset.git
+git clone https://github.com/Ericdataplus/kaggle-books-dataset.git
 cd kaggle-books-dataset
 
 # Create virtual environment
