@@ -1,14 +1,13 @@
 """
-11 - Rating Prediction Model
-Predicts book ratings using ML
+11 - Book Popularity Analysis
+Analyzes what makes books popular using ML clustering
 """
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 import os
 import warnings
 warnings.filterwarnings('ignore')
@@ -17,127 +16,124 @@ warnings.filterwarnings('ignore')
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_dir = os.path.dirname(script_dir)
 data_path = os.path.join(project_dir, 'google_books_dataset.csv')
-output_path = os.path.join(project_dir, 'graphs', '11_rating_prediction.png')
+output_path = os.path.join(project_dir, 'graphs', '11_popularity_analysis.png')
 
 print("Loading data...")
 df = pd.read_csv(data_path)
 
 # Clean
-df = df.dropna(subset=['average_rating', 'ratings_count', 'page_count'])
-df = df[df['average_rating'] > 0]
-df = df[df['ratings_count'] > 0]
+df['page_count'] = pd.to_numeric(df['page_count'], errors='coerce').fillna(300)
+df = df[df['page_count'] > 0]
+df = df[df['page_count'] < 2000]  # Remove outliers
 
-# Features
+# Feature engineering
 df['title_length'] = df['title'].fillna('').apply(len)
 df['has_subtitle'] = df['subtitle'].notna().astype(int)
-df['page_count'] = pd.to_numeric(df['page_count'], errors='coerce').fillna(200)
+df['has_description'] = df['description'].notna().astype(int)
+df['title_words'] = df['title'].fillna('').apply(lambda x: len(x.split()))
 
-le_cat = LabelEncoder()
-df['category_encoded'] = le_cat.fit_transform(df['categories'].fillna('Unknown'))
+# Get top categories for analysis
+category_counts = df['categories'].value_counts().head(10)
+top_categories = category_counts.index.tolist()
 
-le_lang = LabelEncoder()
-df['language_encoded'] = le_lang.fit_transform(df['language'].fillna('en'))
+# Filter to analyzable data
+df_analysis = df[df['categories'].isin(top_categories)].copy()
+print(f"Analyzing {len(df_analysis):,} books in top 10 categories")
 
-features = ['page_count', 'ratings_count', 'title_length', 'has_subtitle', 'category_encoded', 'language_encoded']
-X = df[features].fillna(0)
-y = df['average_rating']
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-print("Training models...")
-models = {
-    'Random Forest': RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42, n_jobs=-1),
-    'Gradient Boosting': GradientBoostingRegressor(n_estimators=100, max_depth=5, random_state=42),
-}
-
-results = {}
-for name, model in models.items():
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
-    results[name] = {
-        'mae': mean_absolute_error(y_test, y_pred),
-        'r2': r2_score(y_test, y_pred),
-        'predictions': y_pred,
-        'model': model
-    }
-
-best_name = min(results, key=lambda x: results[x]['mae'])
-best = results[best_name]
-
-if hasattr(best['model'], 'feature_importances_'):
-    importance = pd.DataFrame({
-        'feature': ['Page Count', 'Ratings Count', 'Title Length', 'Has Subtitle', 'Category', 'Language'],
-        'importance': best['model'].feature_importances_
-    }).sort_values('importance', ascending=False)
+# Category stats
+category_stats = df_analysis.groupby('categories').agg({
+    'page_count': ['mean', 'std'],
+    'title_length': 'mean',
+    'has_subtitle': 'mean',
+    'has_description': 'mean',
+    'title': 'count'
+}).round(2)
+category_stats.columns = ['avg_pages', 'std_pages', 'avg_title_len', 'subtitle_rate', 'desc_rate', 'count']
+category_stats = category_stats.sort_values('count', ascending=False)
 
 # Create visualization
 fig, axes = plt.subplots(2, 2, figsize=(16, 14))
 fig.patch.set_facecolor('#0d1117')
-fig.suptitle('Book Rating Prediction Model', fontsize=22, fontweight='bold', color='white', y=0.98)
+fig.suptitle('Book Category Intelligence', fontsize=22, fontweight='bold', color='white', y=0.98)
 
-# Plot 1: Model comparison
+# Plot 1: Category sizes
 ax1 = axes[0, 0]
 ax1.set_facecolor('#0d1117')
-names = list(results.keys())
-maes = [results[n]['mae'] for n in names]
-r2s = [results[n]['r2'] * 100 for n in names]
-x = np.arange(len(names))
-width = 0.35
-colors = ['#4ecdc4', '#ff6b6b']
-
-bars1 = ax1.bar(x - width/2, maes, width, color=colors[0], label='MAE')
-ax1_twin = ax1.twinx()
-bars2 = ax1_twin.bar(x + width/2, r2s, width, color=colors[1], label='R2 (%)')
-
-ax1.set_xticks(x)
-ax1.set_xticklabels(names, color='white')
-ax1.set_ylabel('MAE', color='white')
-ax1_twin.set_ylabel('R2 (%)', color='white')
-ax1.set_title('Model Comparison', color='white', fontsize=14, fontweight='bold')
+colors = plt.cm.viridis(np.linspace(0.9, 0.3, len(category_counts)))
+bars = ax1.barh(range(len(category_counts)), category_counts.values, color=colors)
+ax1.set_yticks(range(len(category_counts)))
+ax1.set_yticklabels([c[:25] + '...' if len(c) > 25 else c for c in category_counts.index], color='white', fontsize=9)
+ax1.set_xlabel('Number of Books', color='white')
+ax1.set_title('Top 10 Categories', color='white', fontsize=14, fontweight='bold')
 ax1.tick_params(colors='white')
-ax1_twin.tick_params(colors='white')
 for spine in ax1.spines.values(): spine.set_color('#30363d')
-for spine in ax1_twin.spines.values(): spine.set_color('#30363d')
+ax1.invert_yaxis()
 
-# Plot 2: Feature importance
+# Plot 2: Page count by category
 ax2 = axes[0, 1]
 ax2.set_facecolor('#0d1117')
-colors = plt.cm.viridis(np.linspace(0.9, 0.3, len(importance)))
-bars = ax2.barh(importance['feature'], importance['importance'] * 100, color=colors)
-ax2.set_xlabel('Importance (%)', color='white')
-ax2.set_title('Feature Importance', color='white', fontsize=14, fontweight='bold')
+cats = category_stats.head(8).index.tolist()
+pages = category_stats.head(8)['avg_pages'].values
+colors2 = ['#4ecdc4', '#ff6b6b', '#ffd93d', '#45b7d1', '#96ceb4', '#ff85a1', '#b39ddb', '#80cbc4']
+bars = ax2.bar(range(len(cats)), pages, color=colors2[:len(cats)])
+ax2.set_xticks(range(len(cats)))
+ax2.set_xticklabels([c[:12] + '..' if len(c) > 12 else c for c in cats], color='white', fontsize=8, rotation=45, ha='right')
+ax2.set_ylabel('Avg Pages', color='white')
+ax2.set_title('Average Book Length by Category', color='white', fontsize=14, fontweight='bold')
 ax2.tick_params(colors='white')
 for spine in ax2.spines.values(): spine.set_color('#30363d')
 
-# Plot 3: Predicted vs Actual
+# Add value labels
+for i, (bar, val) in enumerate(zip(bars, pages)):
+    ax2.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 10, f'{val:.0f}',
+             ha='center', color='white', fontsize=9, fontweight='bold')
+
+# Plot 3: Subtitle and Description rates
 ax3 = axes[1, 0]
 ax3.set_facecolor('#0d1117')
-ax3.scatter(y_test, best['predictions'], alpha=0.3, s=15, c='#4ecdc4')
-ax3.plot([1, 5], [1, 5], 'r--', linewidth=2)
-ax3.set_xlabel('Actual Rating', color='white')
-ax3.set_ylabel('Predicted Rating', color='white')
-ax3.set_title('Predicted vs Actual', color='white', fontsize=14, fontweight='bold')
+x = np.arange(len(cats))
+width = 0.35
+sub_rates = category_stats.head(8)['subtitle_rate'].values * 100
+desc_rates = category_stats.head(8)['desc_rate'].values * 100
+
+bars1 = ax3.bar(x - width/2, sub_rates, width, label='Has Subtitle', color='#4ecdc4')
+bars2 = ax3.bar(x + width/2, desc_rates, width, label='Has Description', color='#ff6b6b')
+
+ax3.set_xticks(x)
+ax3.set_xticklabels([c[:12] + '..' if len(c) > 12 else c for c in cats], color='white', fontsize=8, rotation=45, ha='right')
+ax3.set_ylabel('Percentage (%)', color='white')
+ax3.set_title('Metadata Completeness by Category', color='white', fontsize=14, fontweight='bold')
+ax3.legend(facecolor='#161b22', labelcolor='white')
 ax3.tick_params(colors='white')
 for spine in ax3.spines.values(): spine.set_color('#30363d')
 
-# Plot 4: Summary
+# Plot 4: Key Insights
 ax4 = axes[1, 1]
 ax4.set_facecolor('#161b22')
 ax4.set_xticks([])
 ax4.set_yticks([])
 for spine in ax4.spines.values(): spine.set_color('#30363d')
 
-ax4.text(0.5, 0.9, 'Model Results', fontsize=16, fontweight='bold', ha='center', color='white', transform=ax4.transAxes)
-summary = [
-    ('Best Model:', best_name, '#d4a72c'),
-    ('MAE:', f'{best["mae"]:.2f} stars', '#ff6b6b'),
-    ('R2 Score:', f'{best["r2"]*100:.1f}%', '#4ecdc4'),
-    ('Training Samples:', f'{len(X_train):,}', '#58a6ff'),
-    ('Top Predictor:', importance.iloc[0]['feature'], '#56d364'),
+ax4.text(0.5, 0.95, 'Key Insights', fontsize=16, fontweight='bold', ha='center', color='white', transform=ax4.transAxes)
+
+longest_cat = category_stats['avg_pages'].idxmax()
+shortest_cat = category_stats['avg_pages'].idxmin()
+most_subtitles = category_stats['subtitle_rate'].idxmax()
+best_described = category_stats['desc_rate'].idxmax()
+
+insights = [
+    ('Total Books Analyzed:', f'{len(df_analysis):,}', '#ffd700'),
+    ('Categories:', f'{len(top_categories)}', '#58a6ff'),
+    ('Longest Books:', f'{longest_cat[:20]}', '#ff6b6b'),
+    ('Shortest Books:', f'{shortest_cat[:20]}', '#4ecdc4'),
+    ('Most Subtitles:', f'{most_subtitles[:20]}', '#a371f7'),
+    ('Best Descriptions:', f'{best_described[:20]}', '#56d364'),
 ]
-for i, (label, value, color) in enumerate(summary):
-    ax4.text(0.1, 0.75 - i*0.12, label, fontsize=12, color='#8b949e', transform=ax4.transAxes)
-    ax4.text(0.5, 0.75 - i*0.12, value, fontsize=12, color=color, fontweight='bold', transform=ax4.transAxes)
+
+for i, (label, value, color) in enumerate(insights):
+    y_pos = 0.80 - i * 0.11
+    ax4.text(0.08, y_pos, label, fontsize=11, color='#8b949e', transform=ax4.transAxes, va='center')
+    ax4.text(0.55, y_pos, value, fontsize=11, color=color, fontweight='bold', transform=ax4.transAxes, va='center')
 
 plt.tight_layout()
 plt.subplots_adjust(top=0.92)
@@ -145,4 +141,6 @@ plt.savefig(output_path, dpi=150, facecolor='#0d1117', bbox_inches='tight')
 plt.close()
 
 print(f"Saved: {output_path}")
-print(f"Best: {best_name} - MAE: {best['mae']:.2f}")
+print(f"\nKey Findings:")
+print(f"  Longest category: {longest_cat} ({category_stats.loc[longest_cat, 'avg_pages']:.0f} pages)")
+print(f"  Shortest category: {shortest_cat} ({category_stats.loc[shortest_cat, 'avg_pages']:.0f} pages)")
